@@ -1,0 +1,12 @@
+body {
+  background-image: url("img3.jpg");
+  background-size: 100% 200%;
+  background-repeat: no-repeat;
+}
+
+.form-container {
+  background: #ffffff;
+  padding: 30px;
+  box-shadow: 0px, 0px, 10px, 0px #000000;
+  margin: 20px;
+}
