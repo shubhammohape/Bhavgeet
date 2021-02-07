@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+</head>
+
+<style>
+  body {
+    margin: 0;
+  }
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+</style>
+
+<body>
+
+    <div id="cont1">
+      <button disabled>
+          take a snapshot</button>
+        <video></video>
+    </div>
+
+    <div id="cont2" style="display: none;">
+      <img src="#" id="img" alt="" />
+      <div id="emotion">Emotion</div>
+      <div id="gender">Gender</div>
+    </div>  
+
+      <script>
+          const vid = document.querySelector('video');
+navigator.mediaDevices.getUserMedia({video: true}) // request cam
+.then(stream => {
+  vid.srcObject = stream; // don't use createObjectURL(MediaStream)
+  return vid.play(); // returns a Promise
+})
+.then(()=>{ // enable the button
+  const btn = document.querySelector('button');
+  btn.disabled = false;
+  btn.onclick = e => {
+    takeASnap()
+    .then(download);
+  };
+});
+
+function takeASnap(){
+  const canvas = document.createElement('canvas'); // create a canvas
+  const ctx = canvas.getContext('2d'); // get its context
+  canvas.width = vid.videoWidth; // set its size to the one of the video
+  canvas.height = vid.videoHeight;
+  ctx.drawImage(vid, 0,0); // the video
+  return new Promise((res, rej)=>{
+    canvas.toBlob(res, 'image/jpeg'); // request a Blob from the canvas
+  });
+}
+
+function download(blob){
+  // uses the <a download> to download a Blob
+  let a = document.createElement('a'); 
+  a.href = URL.createObjectURL(blob);
+  
+  $('#img').attr('src',a.href);
+  $('#cont1').hide();
+  $('#cont2').show();
+
+  (async () => {
+    await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
+    await faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
+    await faceapi.nets.faceLandmark68Net.loadFromUri('./models');
+    await faceapi.nets.faceExpressionNet.loadFromUri('./models');
+    await faceapi.nets.ageGenderNet.loadFromUri("./models")
+    
+    const image = document.querySelector('img');
+    const canvas = faceapi.createCanvasFromMedia(image);
+
+
+    const detection = await faceapi
+      .detectSingleFace(image, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceExpressions()
+      .withAgeAndGender();
+
+    const dimensions = {
+        width: image.width,
+        height: image.height
+    };
+
+    const resizedDimensions = faceapi.resizeResults(detection, dimensions);
+
+    document.body.append(canvas);
+
+    faceapi.draw.drawDetections(canvas, resizedDimensions);
+    faceapi.draw.drawFaceLandmarks(canvas, resizedDimensions);
+    faceapi.draw.drawFaceExpressions(canvas, resizedDimensions);
+
+    if (resizedDimensions && Object.keys(resizedDimensions).length > 0) {
+     
+        const gender = resizedDimensions.gender;
+        const expressions = resizedDimensions.expressions;
+
+        const maxValue=Math.max(...Object.values(expressions));
+      
+        const emotion = Object.keys(expressions).filter(
+          item => expressions[item] === maxValue
+        );
+       
+        document.getElementById("gender").innerText = `Gender - ${gender}`;
+        document.getElementById("emotion").innerText = `Emotion - ${emotion[0]}`;
+      }
+
+})();
+}
+</script>
+<script src="./face-api.min.js"></script>
+
+</body>
+</html>

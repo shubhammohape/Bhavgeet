@@ -1,6 +1,6 @@
+
 const video = document.getElementById("video");
-const isScreenSmall = window.matchMedia("(max-width: 700px)");
-let predictedAges = [];
+const isScreenSmall = window.matchMedia("(max-width: 1000px)");
 
 /****Loading the model ****/
 Promise.all([
@@ -22,9 +22,9 @@ function startVideo() {
 /****Fixing the video with based on size size  ****/
 function screenResize(isScreenSmall) {
   if (isScreenSmall.matches) {
-    video.style.width = "320px";
-  } else {
     video.style.width = "500px";
+  } else {
+    video.style.width = "700px";
   }
 }
 
@@ -56,24 +56,17 @@ video.addEventListener("playing", () => {
 
     /****Setting values to the DOM****/
     if (resizedDetections && Object.keys(resizedDetections).length > 0) {
-      const age = resizedDetections.age;
-      const interpolatedAge = interpolateAgePredictions(age);
+     
       const gender = resizedDetections.gender;
       const expressions = resizedDetections.expressions;
       const maxValue = Math.max(...Object.values(expressions));
       const emotion = Object.keys(expressions).filter(
         item => expressions[item] === maxValue
       );
-      document.getElementById("age").innerText = `Age - ${interpolatedAge}`;
+      
       document.getElementById("gender").innerText = `Gender - ${gender}`;
       document.getElementById("emotion").innerText = `Emotion - ${emotion[0]}`;
     }
   }, 10);
 });
 
-function interpolateAgePredictions(age) {
-  predictedAges = [age].concat(predictedAges).slice(0, 30);
-  const avgPredictedAge =
-    predictedAges.reduce((total, a) => total + a) / predictedAges.length;
-  return avgPredictedAge;
-}

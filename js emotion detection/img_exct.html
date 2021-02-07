@@ -1,56 +1,98 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head runat="server">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="style.css" rel="stylesheet" />
     <title>Document</title>
-</head>
-<body>
-    <div class="video-wrap">
-        <video id="video" playsinline autoplay></video>
-    </div>
+  </head>
+  <body>
+    <body style="text-align: center">
+      <video id="video" width="320" height="240" autoplay></video>
 
-    <div class="controller">
-        <button id="snap">Capture</button>
-    </div>
+      <button id="btnStart">Film</button>
+      <button id="btnPhoto">Take a picture</button>
 
-    <canvas id="canvas" width="640" height="480"></canvas>
-<script>
-'use strict';
-const video =document.getElementById('video');
-const canvas =document.getElementById('canvas');
-const snap =document.getElementById('snap');
-const errorMsgElement =document.getElementById('spanErrorMsg');
+      <canvas id="canvas" width="320" height="240"></canvas>
 
-const constraints = {
-    audio:false,
-    video:{
-        width:1280,height:720
-    }
-};
+      <br />
+      <br />
+      <br />
+      <br />
 
-async function init(){
-    try{
-        const stream =await navigator.mediaDevices.getUserMedia(constraints);
-        handleSuccess(stream);
-    }
-    catch(e){
-        errrorMsgElement.innerHTML='navigator.getUserMedia.error:${e.toString()}';
+      <button onclick="javascript:UploadPic();return false;">Save</button>
+    </body>
+    <script>
+      window.onload = function () {
+        navigator.getUserMedia =
+          navigator.getUserMedia ||
+          navigator.webkitGetUserMedia ||
+          navigator.mozGetUserMedia ||
+          navigator.msGetUserMedia;
 
-    }
+        //picture
+        var canvas = document.getElementById("canvas"),
+          context = canvas.getContext("2d"),
+          //film area
+          video = document.getElementById("video"),
+          //buttons
+          btnStart = document.getElementById("btnStart"),
+          btnPhoto = document.getElementById("btnPhoto"),
+          //video and audio
+          videoObj = {
+            video: true,
+            audio: false,
+          };
 
-}
-function handleSuccess(stream){
-    window.stream=stream;
-    video.srcObject=stream;
-}
-init();
-var context=canvas.getContext('2d');
-snap.addEventListener("click",function(){
-    context.drawImage(video,0,0,640,480)
-})
+        //begin film
+        btnStart.addEventListener("click", function () {
+          var localMediaStream;
 
+          if (navigator.getUserMedia) {
+            navigator.getUserMedia(
+              videoObj,
+              function (stream) {
+                video.src = navigator.webkitGetUserMedia
+                  ? window.webkitURL.createObjectURL(stream)
+                  : stream;
+                localMediaStream = stream;
 
-</script>
-</body>
+                if (navigator.mozGetUserMedia) {
+                  video.mozSrcObject = stream;
+                }
+              },
+              function (error) {
+                console.error("Video capture error: ", error.code);
+              }
+            );
+
+            //capture image button
+            btnPhoto.addEventListener("click", function () {
+              context.drawImage(video, 0, 0, 320, 240);
+            });
+          }
+        });
+      };
+
+      //Upload da imagem
+      function UploadPic() {
+        //Converte a imagem em base64
+        var Pic = document.getElementById("canvas").toDataURL("image/jpg");
+        Pic = Pic.replace(/^data:image\/(png|jpg);base64,/, "");
+
+        //Envia a imagem em base64 para o server (pasta local)
+        $.ajax({
+          type: "POST",
+          url: "Save_Picture.aspx/UploadPic",
+          data: '{ "imageData" : "' + Pic + '" }',
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function (msg) {
+            alert("Done, Picture Uploaded.");
+          },
+        });
+      }
+    </script>
+  </body>
 </html>
