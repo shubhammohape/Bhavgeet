@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles/custom_css/main.css">
+    <link rel="stylesheet" href="./styles/custom_css/login.css">
+    <title>Bhaavgeet-Login</title>
+</head>
+<body>
+     <main>
+         <div id="test" class="container-fluid main-box">
+            <div class="container outer-box p-0" style="width: 60%;">
+                <div class="row m-0 p-0 h-100 g-0">
+                    <div class="col-lg-7 m-0 p-0 ">
+                        <div class="container-fluid carousel p-0 m-0 h-100 w-100">
+                            <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                                <ol class="carousel-indicators">
+                                  <li data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active"></li>
+                                  <li data-bs-target="#carouselExampleDark" data-bs-slide-to="1"></li>
+                                  <li data-bs-target="#carouselExampleDark" data-bs-slide-to="2"></li>
+                                </ol>
+                                <div id="carousel-box" class="carousel-inner" style="width: 100; height:100;">
+                                  <div class="carousel-item active" data-bs-interval="5000">
+                                    <img src="./images/block1.jpg" class="img-fluid img-item" style="height: calc(32vw + 10rem);" alt="1">
+                                  </div>
+                                  <div class="carousel-item" data-bs-interval="5000" >
+                                    <img src="./images/block2.jpg" class="img-fluid img-item" style="height: calc(32vw + 10rem);" alt="2">
+                                  </div>
+                                  <div class="carousel-item" data-bs-interval="5000">
+                                    <img src="./images/block3.jpg" class="img-fluid img-item" style="height: calc(32vw + 10rem);" alt="3">
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">   
+                        <div class="container-fluid" style="height: 100%;">
+                            <form >
+                                <div class="form-content">
+                                    <h3>Bhaavgeet</h3>
+                                    <br><br><br>
+                                    <p>Welcome to Bhaavgeet</p>
+                                    <br><br>
+                                    <div class="form-input-content">
+                                        <label for="fname">Username or Email:</label><br>
+                                        <input type="text" id="fname" name="fname"><br> <br>
+                                        <label for="lname">Password:</label><br>
+                                        <input type="text" id="lname" name="lname">
+                                    </div>
+                                    <br>
+                                    <button type="button" class="btn btn-primary">Sign in</button>
+                                    <br>
+                                    <hr>&nbsp;&nbsp; or &nbsp;&nbsp;<hr>
+                                    <br>
+                                    <button type="button" class="btn btn-primary">
+                                        Sign in with Google
+                                    </button>
+                                    <p>New to Bhaavgeet? <a href="#"> Create Account</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </main>
+     <script>
+         var offsetHeight = document.getElementById('test').offsetHeight;
+         document.getElementsByClassName('img-item').style.height = offsetHeight;
+     </script>
+    <script src="./bootstrap/js/bootstrap.min.js"></script>
+    <script src="./bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
