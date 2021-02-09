@@ -9,6 +9,11 @@
   src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
   integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
   crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 </head>
 
 <style>
@@ -16,31 +21,208 @@
     margin: 0;
   }
   canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+  position: relative;
+    border-radius: 15px;
+    box-shadow: #fff;
+    display: block;
+    width: 700px;
+  height: auto; 
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
   }
+  video{
+    border-radius: 15px;
+    box-shadow: #fff;
+  }
+  .bg {
+    animation:slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg, #8E0E00 50%, #1F1C18 50%);
+    bottom:0;
+    left:-50%;
+    opacity:.5;
+    position:fixed;
+    right:-50%;
+    top:0;
+    z-index:-1;
+  }
+  
+  .bg2 {
+    animation-direction:alternate-reverse;
+    animation-duration:4s;
+  }
+  
+  .bg3 {
+    animation-duration:5s;
+  }
+  
+
+
+  @keyframes slide {
+    0% {
+      transform:translateX(-25%);
+    }
+    100% {
+      transform:translateX(25%);
+    }
+  }
+
+  .button {
+  display: inline-block;
+  background: #4285f4;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 20px 30px;
+  border-radius: 5px;
+  box-shadow: 0px 17px 10px -10px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  -webkit-transition: all ease-in-out 300ms;
+  transition: all ease-in-out 300ms;
+  display: flex;justify-content: center;align-items: center;width:200px;margin:50px auto;
+}
+.button:hover {
+  box-shadow: 0px 37px 20px -20px rgba(0, 0, 0, 0.2);
+  -webkit-transform: translate(0px, -10px) scale(1.2);
+          transform: translate(0px, -10px) scale(1.2);
+}
+.box{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: auto;
+  background: #111845a6;
+  box-sizing: border-box;
+  overflow:auto;
+  box-shadow: 0 20px 50px rgb(23, 32, 90);
+  border: 2px solid #2a3cad;
+  color: white;
+  padding: 20px;
+}
+
+.box:before{
+  content: '';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  
+}
+
+.box:hover:before{
+  left:-50%;
+  transform: skewX(-5deg);
+}
+
+
+.box .content{
+  position:absolute;
+  top:15px;
+  left:15px;
+  right:15px;
+  bottom:15px;
+  border:1px solid #f0a591;
+  padding:20px;
+  text-align:center;
+  box-shadow: 0 5px 10px rgba(9,0,0,0.5);
+  
+}
+
+.box span{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  box-sizing: border-box;
+  
+}
+
+.box span:nth-child(1)
+{
+  transform:rotate(0deg);
+}
+
+.box span:nth-child(2)
+{
+  transform:rotate(90deg);
+}
+
+.box span:nth-child(3)
+{
+  transform:rotate(180deg);
+}
+
+.box span:nth-child(4)
+{
+  transform:rotate(270deg);
+}
+
+.box span:before
+{
+  content: '';
+  position: absolute;
+  width:100%;
+  height: 2px;
+  background: #50dfdb;
+  animation: animate 4s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+  transform:scaleX(0);
+  transform-origin: left;
+  }
+  50%
+  {
+    transform:scaleX(1);
+  transform-origin: left;
+  }
+  50.1%
+  {
+    transform:scaleX(1);
+  transform-origin: right;
+    
+  }
+  
+  100%
+  {
+    transform:scaleX(0);
+  transform-origin: right;
+    
+  }
+
+  
+} 
+
+
+
 </style>
 
 <body>
-
+  <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
     <div id="cont1">
-      <button disabled>
-          take a snapshot</button>
+      
+          <div class="box">
         <video></video>
+        <button class="button" disabled>
+          take a snapshot</button>
+      </div>
     </div>
 
-    <div id="cont2" style="display: none;">
+    <div id="cont2" style="display: none;" class="box">
       <img src="#" id="img" alt="" />
       <div id="emotion">Emotion</div>
       <div id="gender">Gender</div>
     </div>  
-<div >
 
-</div>
       <script>
-
-const vid = document.querySelector('video');
+          const vid = document.querySelector('video');
 navigator.mediaDevices.getUserMedia({video: true}) // request cam
 .then(stream => {
   vid.srcObject = stream; // don't use createObjectURL(MediaStream)
@@ -75,6 +257,8 @@ function download(blob){
   $('#cont1').hide();
   $('#cont2').show();
 
+ 
+
   (async () => {
     await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
     await faceapi.nets.tinyFaceDetector.loadFromUri("./models"),
@@ -84,9 +268,10 @@ function download(blob){
     
     const image = document.querySelector('img');
     const canvas = faceapi.createCanvasFromMedia(image);
-    
+
+
     const detection = await faceapi
-      .detectSingleFace(image, new faceapi.TinyFaceDetectorOptions())
+      .detectSingleFace(image)
       .withFaceLandmarks()
       .withFaceExpressions()
       .withAgeAndGender();
@@ -130,8 +315,8 @@ function download(blob){
 
 })();
 }
-      </script>
-<script src="./face-api.min.js"></script>
+</script>
+<script src="./js/face-api.min.js"></script>
 
 </body>
 </html>
