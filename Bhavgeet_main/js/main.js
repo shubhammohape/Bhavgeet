@@ -81,5 +81,9 @@ function interpolateAgePredictions(age) {
 function capture(){
   let emotion=document.getElementById('emotion').innerText;
   emotion=emotion.slice(10);
-  alert(emotion);
+    var a = document.createElement('a');
+    a.href=`/authorize?m=${emotion}`;
+    a.innerHTML = "Genrate Playlist";
+    document.body.appendChild(a);
+  
 }

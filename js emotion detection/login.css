@@ -1,0 +1,55 @@
+body {
+  /*background-image: url(../../images/bg-3.jpg);*/
+  background: linear-gradient(to bottom, white 20%, lightgrey);
+  background-size: cover;
+}
+/*main-box {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+}*/
+.main-box {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.outer-box {
+  background-color: black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 10px grey;
+}
+
+img {
+  border-radius: 5px 0px 0px 5px;
+}
+
+hr {
+  display: inline-block;
+  width: 20%;
+}
+form {
+  height: 100%;
+  background-color: rgb(61, 60, 60);
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  font-family: "Do-Hyeon";
+}
+form button {
+  display: block;
+  margin: 1rem;
+}
+form label {
+  text-align: left;
+}
+.form-content {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
