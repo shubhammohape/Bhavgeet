@@ -101,7 +101,9 @@ app.get('/authorize',(req,res)=>{
                  }
                 
               })
+
             }
+            
             res.redirect('/new.php')
           }).catch((error)=>{
             res.send(`Error : ${error}`);

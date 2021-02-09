@@ -27,7 +27,7 @@
 <div class="bg"></div>
 <div class="bg bg2"></div>
 <div class="bg bg3"></div>
-<a href="#" class="btn" style=" color:white;display: flex;justify-content: center;align-items: center;width:150px;margin:50px auto;">Home Page</a>
+<a href="delete.php" class="btn" style=" color:white;display: flex;justify-content: center;align-items: center;width:150px;margin:50px auto;"cd>Home Page</a>
     <div class="row row-cols-1 row-cols-md-3 g-4 " style="margin:15px;">
         <?php
 
