@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Face recognition App</title>
-    <link rel="stylesheet" href="stylevideo.css" />
+    <link rel="stylesheet" href="./css/videostyle.css" />
   </head>
   <body>
-    <header>Face recognition in the browser using Javascript</header>
+    <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
+  <div class="box">
     <div class="container">
       <video id="video" height="500" width="500" autoplay muted></video>
     </div>
     <div class="result-container">
-      <div id="emotion">Emotion</div>
-      <div id="gender">Gender</div>
-      <div id="age">Age</div>
-      <button id="capture" onclick="capture()">Capture</button>
+      <div id="emotion">Emotion :</div>
+      <div id="gender">Gender :</div>
      
+      <button id="capture" onclick="capture()">Capture</button>
     </div>
-
+  </div>
     <script src="./js/face-api.min.js"></script>
     <script src="./js/main.js"></script>
   </body>
