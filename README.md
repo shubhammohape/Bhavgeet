@@ -1,1 +1,1 @@
-<img src="Bhavgeet_main/img/carousel1.jpg">
+<img src="Bhavgeet_main/img/readme-gif.gif">
