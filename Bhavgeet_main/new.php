@@ -33,29 +33,39 @@
 
             $sql="SELECT * FROM `musicinfo`";
             $result=$conn->query($sql);
-
+            $i=7;
             while($row=$result->fetch_assoc()){
-                
-echo '<div class="col">';
+echo '<div class="col"id='.$i.' >';
 
 
 echo '<div class="forcard" data-tilt>';
 echo '<img src="'.$row['img'].'" alt="user">';
-echo '<h1 style=" font-size:25px; text-align: center;">'.$row['Trackname'].'</h1>';
+echo '<h1 style=" font-size:25px; text-align: center;" id='.$i.'>'.$row['Trackname'].'</h1>';
 echo '<h3 style=" font-size:20px;">'.$row['Artistname'].'</h3>';
 echo '<h3>'.$row['reldate'].'</h3>';
-echo '<a href="'.$row['src'].'" target="_blank" class="round-button"><i class="fa fa-play fa-2x"></i></a>';
+echo '<div class="row">';
+echo '<form action="" method="POST" >';
+echo '<a href="'.$row['src'].'" target="_blank" class="round-button col-sm"><i class="fa fa-play fa-2x"></i></a>';
+echo '<a href=saveplaylist.php?id='.$i.' class="round-button"></a>';
+echo '</form>';
 echo '</div>';
 echo '</div>';
-
-
-
+echo '</div>';
+$i=$i+1;
             }
         ?>
     </div>
-    
+    <script>
+    var divs = document.getElementsByTagName('h1');
+    var divArray=[];
+    for (var i = 0; i < divs.length; i += 1) {
+    divArray.push(divs[i].innerHTML);
+    }
+    console.log(divArray)
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <!-- tilt js -->
     <script src="./js/vanilla-tilt.min.js"></script>
+    
 </body>
 </html>
