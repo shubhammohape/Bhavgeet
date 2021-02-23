@@ -7,6 +7,12 @@
     border: none;
     font-family: 'Raleway', sans-serif;
 }
+#header
+{
+  position: absolute;
+top:0%;
+left:30%
+}
 html {
     height:100%;
   }

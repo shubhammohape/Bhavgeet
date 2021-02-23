@@ -11,8 +11,13 @@
     }
 
     $deleterecords = "TRUNCATE TABLE musicinfo";
-
     mysqli_query( $conn, $deleterecords );
-    header("Location:./index.html")
+    if(isset($_GET['r']) && strlen($_GET['r']) > 0)
+    {
+        header("Location:./authorize?m=".$_GET['r']);
+    }
+    else{
+    header("Location:./index.html");
+    }
 ?>
 
