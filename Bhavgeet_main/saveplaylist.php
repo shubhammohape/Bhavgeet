@@ -1,7 +1,9 @@
 <?php
-
+session_start();
+if(!isset($_GET['id'])){
+die('Connection issues');
+}
 $id=$_GET['id'];
-echo $id;
 $host="localhost";
 $username="root";
 $password="";
@@ -25,15 +27,17 @@ $img=$n['img'];
 $playlisturl=$n['playlisturl'];
 $Artist2=$n['Artist2'];
 echo $Trackname;
-$sql = "INSERT INTO `playlist` (playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2) VALUES('$playlistname','$Artistname','$Trackname','$duration','$src','$img','$reldate','$playlisturl','$Artist2')";
+$sql = "INSERT INTO `saveplaylist` (playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2) VALUES('$playlistname','$Artistname','$Trackname','$duration','$src','$img','$reldate','$playlisturl','$Artist2')";
 $result = $conn->query($sql);
 if($result)
 {
-    echo 'true';
+    $_SESSION['key']="Successfully Saved";
+ header('Location:./new.php');
 }
 else 
 {
-    echo 'false';
+    $_SESSION['keyr']="There was an Error During the Process. Try Again";
+    header('Location:./new.php');
 }
 
 //$sql = "insert into playlist(Trackname) values(".$row[$id].")"
