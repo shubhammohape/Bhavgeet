@@ -57,7 +57,7 @@ if ($conn->connect_errno) {
             echo '<a href="' . $row['src'] . '" target="_blank" class="round-button col-sm" id="' . $id . '"><i class="fa fa-play fa-2x"></i></a>';
             echo '</div>';
             echo '<div class="col">';
-            echo '<a href=deletesongs.php?id=' . $row['id'] . ' class="round-button col-sm"> <i class="far fa-close fa-2x"></i></a>';
+            echo '<a href=deletesongs.php?id=' . $row['id'] . ' class="round-button col-sm"> <i class="fas fa-times fa-2x"></i></a>';
             echo '</div>';
             echo '</div>';
             echo '</form>';
