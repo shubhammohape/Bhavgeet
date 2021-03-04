@@ -49,21 +49,14 @@
     </div>
     </main>
     <?php
-        $dbhost = 'localhost';
-        $dbuser = 'root';
-        $dbpass = '';
-        $dbname = 'spotify-api';
+        include 'connect.php';
 
         if(isset($_POST['email']) and isset($_POST['password']) and isset($_POST['rp-password'])){
             $password = $_POST['password'];
             $rp_password = $_POST['rp-password'];
             if($password == $rp_password){
                 $email = $_POST['email'];
-                $conn = mysqli_connect($dbhost, $dbuser, $dbpass,$dbname);
-
-                if(!$conn ) {
-                    die('Could not connect: ' . mysqli_error());
-                }
+                
                 $sql = "SELECT * FROM users WHERE email='$email'";
                 $result = mysqli_query($conn, $sql);
 
