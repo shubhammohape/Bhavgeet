@@ -9,8 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "hbs": "^4.1.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.5.0",
     "sphp": "^0.6.3",
     "spotify-web-api-node": "^5.0.2"
   }
