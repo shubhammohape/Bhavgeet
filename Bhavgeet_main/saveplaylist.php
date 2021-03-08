@@ -8,7 +8,7 @@ $host="localhost";
 $username="root";
 $password="";
 $dbname="spotify-api";
-
+echo $_SESSION['uname'];
 $conn=new mysqli($host,$username,$password,$dbname);
 if ($conn->connect_errno) {
     echo "Failed to connect to MySQL: ".$mysqli->connect_error;

@@ -2,8 +2,22 @@ const express = require('express')
 const app = express()
 const port = 3000;
 const sphp = require('sphp')
+const bcrypt = require('bcrypt')
+const session = require('express-session')
+const nodemailer =require('nodemailer')
+var sess
+const hbs = require('hbs')
+
+
+app.set('view engine','hbs');
+app.use(session({secret:'BhavgeetTool',saveUninitialized:false}))
 app.use(sphp.express(__dirname));
 app.use(express.static(__dirname))
+app.use(express.urlencoded({
+  extended: true
+}))
+
+
 const spotify =require('spotify-web-api-node');
 const spotifyApi = new spotify({
   clientId: 'd97803efc75d48ea81360766acd7c5bb',
@@ -12,7 +26,7 @@ const spotifyApi = new spotify({
 });
 const mysql = require('mysql');
 const { request } = require('http');
-
+const { randomInt } = require('crypto');
 var con = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",
@@ -21,13 +35,28 @@ var con = mysql.createConnection({
 });
 
 
-
+//video
 app.get('/video',(req,res)=>{
-  res.redirect('/det_video.html')
+  sess= req.session
+  
+  if(sess.auth === 1)
+  {
+    res.redirect('/det_video.html')
+  }
+  else{
+  res.redirect('./leave.html')
+  }
 } )
 
+
+//spotifyAPI
 app.get('/authorize',(req,res)=>{
-   app.locals.global_value = req.query.m;
+
+  sess= req.session
+  
+  if(sess.auth === 1)
+  {
+    app.locals.global_value = req.query.m;
  
     var scopes = ' streaming user-read-private user-read-email';
     res.redirect('https://accounts.spotify.com/authorize'+
@@ -97,14 +126,15 @@ app.get('/authorize',(req,res)=>{
             
               con.query(sql,(err,resp)=>{
                 if (err) {
-                  return console.log(err)
+                
+                res.redirect('./index2')
                  }
                 
               })
 
             }
             
-            res.redirect('/new.php')
+            res.redirect('/new')
           }).catch((error)=>{
             res.send(`Error : ${error}`);
           })
@@ -114,14 +144,401 @@ app.get('/authorize',(req,res)=>{
       
      
       });
+  }
+  else{
+  res.redirect('./leave.html')
+  }
+
+
+ 
     
 })
+
+//Index Page
 app.get('/',(req,res)=>{
   
 });
+
+
+//Webcam
 app.get('/webcam',(req,res)=>{
-  res.redirect('/webcam_ext.html')
+
+
+  sess= req.session
+  if(sess.auth === 1)
+  {
+    res.redirect('/webcam_ext.html')
+  }
+  else{
+  res.redirect('./leave.html')
+  }
+ 
+});
+
+//AFter Login
+app.get('/index2',(req,res)=>{
+
+
+  sess= req.session
+  if(sess.auth === 1)
+  {
+    res.redirect('/index2.html')
+  }
+  else{
+  res.redirect('./leave.html')
+  }
+ 
+});
+
+//Login
+app.post('/login',(req,res)=>{
+sess = req.session;
+
+const username =req.body.signname
+const  password = req.body.signpassword
+const sql12 = `select password from users where email='${username}'  `
+con.query(sql12,(error,resl)=>{
+  if(error)
+  {
+    sess.error = "Error ! Try later"
+    res.render('user-validation',{err:sess.error})
+    }
+   
+   bpass = resl[0].password
+  bcrypt.compare(password,bpass,(err,result)=>{
+    if(result==true)
+    {
+    sess.uname = username
+    sess.auth = 1 
+    sess.error =""
+    res.redirect('./index2')
+    }
+    else
+    {    
+      sess.auth= 0
+      sess.error = "Incorrect email or password"
+      res.render('user-validation',{err:sess.error})
+      }
+
+  })
+  
+})
+
+
+});
+
+//Signup
+app.post('/signup',(req,respo)=>{
+const username = req.body.signupusername
+const password = req.body.signuppassword
+const repeatPassword = req.body.signuprppassword
+const emailAddrss = req.body.signupemail
+const vericode = randomInt(randomInt(1,40),randomInt(55,89)) + '' +  randomInt(randomInt(100,240),randomInt(555,989)) 
+sess = req.session
+sess.uname = emailAddrss
+
+if(password === repeatPassword)
+{
+bcrypt.hash(password,8).then((data)=>{
+  const bpass = data
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'epic1470@gmail.com',
+      pass: 'abcdefgh@12345'
+    }
+  });
+  var mailOptions = {
+    from: 'epic1470@gmail.com',
+    to: emailAddrss,
+    subject: 'Verification code',
+    text: 'Your Verification code for account is '+ vericode +'.'
+  };
+  const sql = `insert into users(username,password,email,v_key,verified) values('${username}' , '${bpass}' ,'${emailAddrss}' ,${vericode},0)`
+  con.query(sql,(err,res)=>{
+    if (err) {
+      sess.error= " Error ! Try Later" 
+      respo.render("user-validation",{err:sess.error})
+     }
+     transporter.sendMail(mailOptions).then((data)=>{
+      respo.redirect("./jiten-bhai/verify.html")
+  }).catch((err)=>{
+      sess.error= "Error ! Try later "
+      respo.render("user-validation",{err:sess.error})
+    });
+  })
+ 
+  
+}).catch((err)=>{
+  sess.error= " Error! Try later"  
+  respo.render("user-validation",{err:sess.error})
+});
+}
+else{
+sess.error= " Password Do not Match "  
+respo.render("user-validation",{err:sess.error})
+}
+
 });
 
 
+
+//verifyEmail
+app.get('/verify',(req,res)=>{
+
+  sess= req.session
+  
+  if(sess.auth === 1)
+  {
+    res.redirect('./jiten-bhai/verify.html') 
+  }
+  else{
+  res.redirect('./leave.html')
+  }
+ 
+})
+
+app.post('/verify',(reqr,resu)=>{
+  
+  sess = reqr.session 
+  const vericoder = reqr.body.verifycode
+  const sql1 = `select v_key from users where email='${sess.uname}' `
+ con.query(sql1,(error,resl)=>{
+  if (error) {
+    sess.error= " Error! Try Later" 
+    resu.render("verify-pass",{err:sess.error})
+   }
+ 
+   if(vericoder === (resl[0].v_key) )
+   {
+    const sql2 = `update users set verified=1 where email = '${sess.uname}'`
+
+    con.query(sql2 , (e,r)=>{
+      if(e)
+      {
+        sess.error= " Error ! Try Later " 
+        resu.render("verify-pass",{err:sess.error})
+      }
+      sess.error= " Successfully verified" 
+      resu.render("verify-pass",{err:sess.error})
+    })
+
+
+   }
+   else{
+    sess.error= "verification code wrong  " 
+    resu.render("verify-pass",{err:sess.error})
+   }
+ })
+ 
+ 
+})
+//saveplaylist
+app.get('/saveplaylist',(req,resu)=>{
+  sess =req.session
+  if(sess.auth === 1)
+  {
+
+    val = req.query.id
+  const sql4 = `select * from musicinfo where id = ${val}`
+  con.query(sql4,(err,resp)=>{
+    if(err)
+    {
+      resu.redirect('./index2')
+    }
+    else{
+      const id  = resp[0].id
+      const trackname = resp[0].Trackname
+      const plname = resp[0].playlistname
+      const artname = resp[0].Artistname
+      const duration = resp[0].duration
+      const src  = resp[0].src
+      const img = resp[0].img
+      const reldate = resp[0].reldate
+      const uid = sess.uname
+      const artname2 = resp[0].Artist2
+      const playurl = resp[0].playlisturl
+  
+
+      const  sql6 = `select uid from users where email='${uid}' `
+
+      con.query(sql6,(error,response)=>{
+        if(error)
+        {
+          
+          resu.redirect('./index2')
+        }
+        const uval = response[0].uid
+        const sql5=`INSERT INTO saveplaylist(playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2,uid) VALUES('${plname}','${artname}','${trackname}',${duration},'${src}','${img}','${reldate}','${playurl}','${artname2}',${uval})`
+     
+      con.query(sql5 ,(err,result)=>{
+        if(err)
+      {
+      
+        resu.redirect('./index2')
+      }
+      else{
+     
+      resu.redirect('./new.php')
+    }
+      })
+      })
+    }
+  })
+  }
+  else{
+    resu.redirect('./leave.html')
+  }
+  
+});
+
+
+// New.Php page
+
+app.get('/new',(req,res)=>{
+
+  sess= req.session
+  
+  if(sess.auth === 1)
+  {
+    res.redirect('/new.php')
+  }
+  else
+  {
+    const sql7 = " TRUNCATE TABLE musicinfo"
+    con.query(sql7,(er,re)=>{
+      res.redirect('./leave.html')
+    })
+  
+  }
+
+})
+
+//Playlist
+app.get('/playlist',(req,res)=>{
+  sess =req.session
+  if(sess.auth === 1)
+  {
+    res.redirect('./playlist.php')
+  }
+  else
+  {
+    res.redirect('./leave.html')
+  }
+});
+
+
+//Forgot Password
+
+app.post('/forgot',(req,res)=>{
+  sess = req.session
+  const email = req.body.email
+  const password =req.body.password
+  const rp_pass = req.body.rppassword
+
+  const sql9 = `select * from users where email='${email}'`
+
+  con.query(sql9,(error,respo)=>{
+    if(error)
+    {
+      sess.error = "Email id is not registered"
+      res.render("user-validation",{err:sess.error})
+    }
+
+   if(password===rp_pass)
+  {
+   global.vericode = randomInt(randomInt(1,40),randomInt(55,89)) + '' +  randomInt(randomInt(100,240),randomInt(555,989)) 
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'epic1470@gmail.com',
+        pass: 'abcdefgh@12345'
+      }
+    });
+    var mailOptions = {
+      from: 'epic1470@gmail.com',
+      to: email,
+      subject: 'Verification code',
+      text: 'Your Verification code for account is '+  global.vericode +'.'
+    };
+    transporter.sendMail(mailOptions).then((d)=>{
+      res.redirect('./jiten-bhai/verify_pass.html')
+     
+        // Verify Password
+   app.post('/verifypass',(reqr,resr)=>{
+    if( global.vericode === reqr.body.verifycode)
+    {
+     
+      const ps =bcrypt.hash(password,8).then((dataa)=>{
+        const sql12 = `update users set password='${dataa}' where email = '${email}'`
+
+        con.query(sql12 , (e,r)=>{
+          if(e)
+          {
+            sess.error= "Error Try Again Later" 
+            resr.render("user-validation",{err:sess.error})
+          }
+          sess.status = "Password Changed Successfully"
+          resr.render("user-validation",{err:sess.status})
+        })
+
+      }).catch((ee)=>{
+        sess.error= "Error Try Again Later"
+        resr.render("user-validation",{err:sess.error})
+      })
+
+
+    }
+else
+{
+sess.error= "Verification code Do not Match"
+resr.render("user-validation",{err:sess.error})
+}
+
+})
+
+    }).catch((er)=>{
+      sess.error= "Error Try Again Later"
+      res.render("user-validation",{err:sess.error})
+    });
+
+  }
+  
+  else
+  {
+    sess.error= "Password Do not Match"
+    res.render("user-validation",{err:sess.error})
+  }
+  })
+
+
+
+});
+
+
+ 
+
+//logout
+
+app.get('/logout',(req,res)=>{
+  sess =req.session
+  if(sess.auth === 1)
+  {
+    
+    req.session.destroy((err)=>{
+      res.redirect('/')
+    })
+    
+  }
+  else
+  {
+    res.redirect('./leave.html')
+  }
+
+})
+
+//Rest
+// app.get('*',(req,res)=>{
+//   res.redirect('../pagenotavail.html')
+//  })
 app.listen(port, () => console.log(`Example app listening on port port!`))
