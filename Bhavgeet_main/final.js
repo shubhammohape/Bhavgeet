@@ -65,7 +65,7 @@ app.get('/authorize',(req,res)=>{
       (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
       '&redirect_uri=' + encodeURIComponent('http://localhost:3000/callback'));
 
-      app.get('/callback',(reqr,res)=>{
+      app.get('/callback',(reqr,resr)=>{
         const error = reqr.query.error;
         const code = reqr.query.code;
         var playlistno;
@@ -90,7 +90,7 @@ app.get('/authorize',(req,res)=>{
           }
      
         if(error){
-          res.send(`Callback Error: ${error}`);
+          resr.redirect('./index2')
         }
         spotifyApi.authorizationCodeGrant(code).then((data)=>
         {
@@ -127,19 +127,19 @@ app.get('/authorize',(req,res)=>{
               con.query(sql,(err,resp)=>{
                 if (err) {
                 
-                res.redirect('./index2')
+                resr.redirect('./index2')
                  }
                 
               })
 
             }
             
-            res.redirect('/new')
+            resr.redirect('/new')
           }).catch((error)=>{
-            res.send(`Error : ${error}`);
+            resr.redirect('./index2')
           })
         }).catch((error)=>{
-            res.send(`Error getting Tokens: ${error}`);
+          resr.redirect('./index2')
         });
       
      
@@ -549,7 +549,7 @@ app.get('/logout',(req,res)=>{
 })
 
  //Rest
-  app.get('*',(req,res)=>{
-   res.redirect('../pagenotavail.html')
-  })
+  // app.get('*',(req,res)=>{
+  //  res.redirect('../pagenotavail.html')
+  // })
 app.listen(port, () => console.log(`Example app listening on port port!`))
