@@ -548,8 +548,8 @@ app.get('/logout',(req,res)=>{
 
 })
 
-// //Rest
-//  app.get('*',(req,res)=>{
-//   res.redirect('../pagenotavail.html')
-//  })
+ //Rest
+  app.get('*',(req,res)=>{
+   res.redirect('../pagenotavail.html')
+  })
 app.listen(port, () => console.log(`Example app listening on port port!`))

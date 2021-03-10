@@ -1,10 +1,20 @@
 <?php
+if(!isset($_GET['i']))
+{
+    die('Page Not Available Temporarily');
+}
+if(isset($_GET['i'])  && $_GET['i']=='p')
+{
+    die('There is an Problem with Sevrer.Try Again Later');
+}
+
 set_time_limit(500);
 session_start();
 $host = "localhost";
 $username = "root";
 $password = "";
 $dbname = "spotify-api";
+$ids = $_GET['i'];
 
 $conn = new mysqli($host, $username, $password, $dbname);
 if ($conn->connect_errno) {
@@ -37,7 +47,7 @@ if ($conn->connect_errno) {
     <div class="row row-cols-1 row-cols-md-3 g-4 " style="margin:15px;">
         <?php
         $id = 0;
-        $sql = "SELECT * FROM `saveplaylist`";
+        $sql = "SELECT * FROM `saveplaylist` where uid= $ids";
         $result = $conn->query($sql);
         $i = 7;
         while ($row = $result->fetch_assoc()) {
