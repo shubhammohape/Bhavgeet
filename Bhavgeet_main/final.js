@@ -44,7 +44,7 @@ app.get('/video',(req,res)=>{
     res.redirect('/det_video.html')
   }
   else{
-  res.redirect('./leave.html')
+  res.redirect('./jiten-bhai/user-validation.html')
   }
 } )
 
@@ -146,7 +146,7 @@ app.get('/authorize',(req,res)=>{
       });
   }
   else{
-  res.redirect('./leave.html')
+    res.redirect('./jiten-bhai/user-validation.html')
   }
 
 
@@ -170,7 +170,7 @@ app.get('/webcam',(req,res)=>{
     res.redirect('/webcam_ext.html')
   }
   else{
-  res.redirect('./leave.html')
+    res.redirect('./jiten-bhai/user-validation.html')
   }
  
 });
@@ -185,7 +185,7 @@ app.get('/index2',(req,res)=>{
     res.redirect('/index2.html')
   }
   else{
-  res.redirect('./leave.html')
+    res.redirect('./jiten-bhai/user-validation.html')
   }
  
 });
@@ -293,7 +293,7 @@ app.get('/verify',(req,res)=>{
     res.redirect('./jiten-bhai/verify.html') 
   }
   else{
-  res.redirect('./leave.html')
+    res.redirect('./jiten-bhai/user-validation.html')
   }
  
 })
@@ -407,7 +407,7 @@ app.get('/new',(req,res)=>{
   {
     const sql7 = " TRUNCATE TABLE musicinfo"
     con.query(sql7,(er,re)=>{
-      res.redirect('./leave.html')
+      res.redirect('./jiten-bhai/user-validation.html')
     })
   
   }
@@ -419,11 +419,22 @@ app.get('/playlist',(req,res)=>{
   sess =req.session
   if(sess.auth === 1)
   {
-    res.redirect('./playlist.php')
-  }
+    const sql15 = `select uid from users where email='${sess.uname}'`
+    con.query(sql15,(err,resu)=>{
+      if(err)
+      {
+        res.redirect('./playlist.php?i=p')
+      }
+    
+      const value = resu[0].uid
+      
+      res.redirect(`./playlist.php?i=${value}`)
+    })
+    }
+
   else
   {
-    res.redirect('./leave.html')
+    res.redirect('./jiten-bhai/user-validation.html')
   }
 });
 
@@ -532,13 +543,13 @@ app.get('/logout',(req,res)=>{
   }
   else
   {
-    res.redirect('./leave.html')
+    res.redirect('./index.html')
   }
 
 })
 
-//Rest
-// app.get('*',(req,res)=>{
+// //Rest
+//  app.get('*',(req,res)=>{
 //   res.redirect('../pagenotavail.html')
 //  })
 app.listen(port, () => console.log(`Example app listening on port port!`))
