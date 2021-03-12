@@ -1,12 +1,11 @@
 <?php
-if(!isset($_GET['i']))
-{
+ if(!isset($_GET['i']))
+ {
     die('Page Not Available Temporarily');
-}
-if(isset($_GET['i'])  && $_GET['i']=='p')
-{
-    die('There is an Problem with Sevrer.Try Again Later');
-}
+} if(isset($_GET['i'])  && $_GET['i']=='p')
+ {
+     die('There is an Problem with Sevrer.Try Again Later');
+ }
 
 set_time_limit(500);
 session_start();
@@ -14,7 +13,10 @@ $host = "localhost";
 $username = "root";
 $password = "";
 $dbname = "spotify-api";
-$ids = $_GET['i'];
+if(isset($_GET['i'])){
+    $ids = $_GET['i'];
+}
+
 
 $conn = new mysqli($host, $username, $password, $dbname);
 if ($conn->connect_errno) {
@@ -67,7 +69,7 @@ if ($conn->connect_errno) {
             echo '<a href="' . $row['src'] . '" target="_blank" class="round-button col-sm" id="' . $id . '"><i class="fa fa-play fa-2x"></i></a>';
             echo '</div>';
             echo '<div class="col">';
-            echo '<a href=deletesongs.php?id=' . $row['id'] . ' class="round-button col-sm"> <i class="fas fa-times fa-2x"></i></a>';
+            echo '<a href=deletesongs.php?i='.$ids.'&id=' . $row['id'] . ' class="round-button col-sm"> <i class="fas fa-times fa-2x"></i></a>';
             echo '</div>';
             echo '</div>';
             echo '</form>';

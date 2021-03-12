@@ -44,7 +44,7 @@ app.get('/video',(req,res)=>{
     res.redirect('/det_video.html')
   }
   else{
-  res.redirect('./jiten-bhai/user-validation.html')
+  res.redirect('./validation/user-validation.html')
   }
 } )
 
@@ -65,90 +65,103 @@ app.get('/authorize',(req,res)=>{
       (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
       '&redirect_uri=' + encodeURIComponent('http://localhost:3000/callback'));
 
-      app.get('/callback',(reqr,resr)=>{
-        const error = reqr.query.error;
-        const code = reqr.query.code;
-        var playlistno;
-        if( app.locals.global_value === 'happy'){
-          playlistno = '6pfOWoznf6TlqELmkVUuJ1'
-          }
-          else if( app.locals.global_value === 'angry')
-          {
-            playlistno = '4zE61Q9qXsAvokEn5Qdlu3'
-          }
-          else if( app.locals.global_value === 'surprised')
-          {
-            playlistno = '6gCRQkxRhmoXAPjYUFFFLz'
-          }
-          else if( app.locals.global_value === 'sad')
-          {
-            playlistno = '4YOfhHpjPB0tq29NPpDY3F'
-          }
-          else
-          {
-            playlistno = '71NI5fW6GZdHiaFu3HPKHO'
-          }
-     
-        if(error){
-          resr.redirect('./index2')
-        }
-        spotifyApi.authorizationCodeGrant(code).then((data)=>
-        {
-         const access_token = data.body['access_token'];
-          const refresh_token = data.body['refresh_token'];
-          const expires_in = data.body['expires_in'];
-
-          spotifyApi.setAccessToken(access_token);
-          spotifyApi.setRefreshToken(refresh_token);
-       
-     
-        
-         
-        
-         spotifyApi.getPlaylist(playlistno).then((data)=>{
-              for(i=0; i < data.body.tracks.items.length ;i++)
-              {
-                const plname = data.body.name;
-              const plurl =data.body.external_urls.spotify;
-              const artistname =data.body.tracks.items[i].track.artists[0].name;
-              if(data.body.tracks.items[i].track.artists[1]){
-               var artistname2= data.body.tracks.items[i].track.artists[1].name;
-              }else{
-                var artistname2= "";
-              }
-              const trackname = data.body.tracks.items[i].track.name;
-              const duration = data.body.tracks.items[i].track.duration_ms;
-              const src = data.body.tracks.items[i].track.external_urls.spotify;
-              const img = data.body.tracks.items[i].track.album.images[0].url;
-              const reldate = data.body.tracks.items[i].track.album.release_date;
-              
-              const sql = `insert into musicinfo(playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2) values('${plname}','${artistname}','"${trackname}"',${duration},'${src}','${img}','${reldate}','${plurl}','${artistname2}')`
-            
-              con.query(sql,(err,resp)=>{
-                if (err) {
-                
-                resr.redirect('./index2')
-                 }
-                
-              })
-
-            }
-            
-            resr.redirect('/new')
-          }).catch((error)=>{
-            resr.redirect('./index2')
-          })
-        }).catch((error)=>{
-          resr.redirect('./index2')
-        });
-      
-     
-      });
+    
   }
   else{
-    res.redirect('./jiten-bhai/user-validation.html')
+    res.redirect('./validation/user-validation.html')
   }
+//callback
 
+app.get('/callback',(reqr,resr)=>{
+  const error = reqr.query.error;
+  const code = reqr.query.code;
+  var playlistno;
+  if( app.locals.global_value === 'happy'){
+    playlistno = '6pfOWoznf6TlqELmkVUuJ1'
+    }
+    else if( app.locals.global_value === 'angry')
+    {
+      playlistno = '4zE61Q9qXsAvokEn5Qdlu3'
+    }
+    else if( app.locals.global_value === 'surprised')
+    {
+      playlistno = '6gCRQkxRhmoXAPjYUFFFLz'
+    }
+    else if( app.locals.global_value === 'sad')
+    {
+      playlistno = '4YOfhHpjPB0tq29NPpDY3F'
+    }
+    else
+    {
+      playlistno = '71NI5fW6GZdHiaFu3HPKHO'
+    }
+
+  if(error){
+    resr.redirect('./index2')
+  }
+  spotifyApi.authorizationCodeGrant(code).then((data)=>
+  {
+   const access_token = data.body['access_token'];
+    const refresh_token = data.body['refresh_token'];
+    const expires_in = data.body['expires_in'];
+
+    spotifyApi.setAccessToken(access_token);
+    spotifyApi.setRefreshToken(refresh_token);
+ 
+
+  
+   
+  
+   spotifyApi.getPlaylist(playlistno).then((data)=>{
+        for(i=0; i < data.body.tracks.items.length ;i++)
+        {
+          const plname = data.body.name;
+        const plurl =data.body.external_urls.spotify;
+        const artistname =data.body.tracks.items[i].track.artists[0].name;
+        if(data.body.tracks.items[i].track.artists[1]){
+         var artistname2= data.body.tracks.items[i].track.artists[1].name;
+        }else{
+          var artistname2= "";
+        }
+
+      
+        if(data.body.tracks.items[i].track.name.indexOf('\'') > -1)
+        {
+          var track = data.body.tracks.items[i].track.name
+          var t =track.replace("'", " ")
+          var trackname = t.toString().trim()
+        }
+        else{
+         var trackname = data.body.tracks.items[i].track.name;
+        }
+        const duration = data.body.tracks.items[i].track.duration_ms;
+        const src = data.body.tracks.items[i].track.external_urls.spotify;
+        const img = data.body.tracks.items[i].track.album.images[0].url;
+        const reldate = data.body.tracks.items[i].track.album.release_date;
+        
+        const sql = `insert into musicinfo(playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2) values('${plname}','${artistname}','${trackname}',${duration},'${src}','${img}','${reldate}','${plurl}','${artistname2}')`
+      
+        con.query(sql,(err,resp)=>{
+          if (err) {
+          resr.redirect('./index2')
+           }
+          
+        })
+
+      }
+      
+      resr.redirect('/new')
+    }).catch((error)=>{
+   
+      resr.redirect('./index2')
+    })
+  }).catch((error1)=>{
+    
+    resr.redirect('./index2')
+  });
+
+
+});
 
  
     
@@ -170,7 +183,7 @@ app.get('/webcam',(req,res)=>{
     res.redirect('/webcam_ext.html')
   }
   else{
-    res.redirect('./jiten-bhai/user-validation.html')
+    res.redirect('./validation/user-validation.html')
   }
  
 });
@@ -185,7 +198,7 @@ app.get('/index2',(req,res)=>{
     res.redirect('/index2.html')
   }
   else{
-    res.redirect('./jiten-bhai/user-validation.html')
+    res.redirect('./validation/user-validation.html')
   }
  
 });
@@ -261,7 +274,7 @@ bcrypt.hash(password,8).then((data)=>{
       respo.render("user-validation",{err:sess.error})
      }
      transporter.sendMail(mailOptions).then((data)=>{
-      respo.redirect("./jiten-bhai/verify.html")
+      respo.redirect("./validation/verify.html")
   }).catch((err)=>{
       sess.error= "Error ! Try later "
       respo.render("user-validation",{err:sess.error})
@@ -288,12 +301,29 @@ app.get('/verify',(req,res)=>{
 
   sess= req.session
   
+
   if(sess.auth === 1)
   {
-    res.redirect('./jiten-bhai/verify.html') 
+    const sql18 = `select verified from users where email ='${sess.uname}'`
+
+    con.query(sql18,(err,result)=>{
+      if(err)
+      {
+      
+        res.redirect('./index2')
+      }
+      if(parseInt(result[0].verified) === 1){
+        res.redirect('./validation/alrverify.html') 
+      }
+      else{
+        res.redirect('./validation/verify.html') 
+      }
+     
+    })
+    
   }
   else{
-    res.redirect('./jiten-bhai/user-validation.html')
+    res.redirect('./validation/user-validation.html')
   }
  
 })
@@ -407,7 +437,7 @@ app.get('/new',(req,res)=>{
   {
     const sql7 = " TRUNCATE TABLE musicinfo"
     con.query(sql7,(er,re)=>{
-      res.redirect('./jiten-bhai/user-validation.html')
+      res.redirect('./validation/user-validation.html')
     })
   
   }
@@ -434,7 +464,7 @@ app.get('/playlist',(req,res)=>{
 
   else
   {
-    res.redirect('./jiten-bhai/user-validation.html')
+    res.redirect('./validation/user-validation.html')
   }
 });
 
@@ -473,7 +503,7 @@ app.post('/forgot',(req,res)=>{
       text: 'Your Verification code for account is '+  global.vericode +'.'
     };
     transporter.sendMail(mailOptions).then((d)=>{
-      res.redirect('./jiten-bhai/verify_pass.html')
+      res.redirect('./validation/verify_pass.html')
      
         // Verify Password
    app.post('/verifypass',(reqr,resr)=>{
@@ -549,7 +579,7 @@ app.get('/logout',(req,res)=>{
 })
 
  //Rest
-  // app.get('*',(req,res)=>{
-  //  res.redirect('../pagenotavail.html')
-  // })
+    //  app.get('*',(req,res)=>{
+    //  res.redirect('../pagenotavail.html')
+    //  })
 app.listen(port, () => console.log(`Example app listening on port port!`))
