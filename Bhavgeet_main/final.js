@@ -70,7 +70,14 @@ app.get('/authorize',(req,res)=>{
   else{
     res.redirect('./validation/user-validation.html')
   }
+
+ 
+    
+})
+
+
 //callback
+
 
 app.get('/callback',(reqr,resr)=>{
   const error = reqr.query.error;
@@ -161,11 +168,8 @@ app.get('/callback',(reqr,resr)=>{
   });
 
 
-});
-
- 
-    
 })
+
 
 //Index Page
 app.get('/',(req,res)=>{
@@ -579,7 +583,7 @@ app.get('/logout',(req,res)=>{
 })
 
  //Rest
-    //  app.get('*',(req,res)=>{
-    //  res.redirect('../pagenotavail.html')
-    //  })
+      app.get('*',(req,res)=>{
+     res.redirect('../pagenotavail.html')
+      })
 app.listen(port, () => console.log(`Example app listening on port port!`))
