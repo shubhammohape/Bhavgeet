@@ -53,33 +53,32 @@ video.addEventListener("playing", () => {
     /****Drawing the detection box and landmarkes on canvas****/
     faceapi.draw.drawDetections(canvas, resizedDetections);
     faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-    faceapi.draw.drawFaceExpressions(canvas, resizedDimensions);
 
     /****Setting values to the DOM****/
     if (resizedDetections && Object.keys(resizedDetections).length > 0) {
-      const age = resizedDetections.age;
-      const interpolatedAge = interpolateAgePredictions(age);
+     
       const gender = resizedDetections.gender;
       const expressions = resizedDetections.expressions;
       const maxValue = Math.max(...Object.values(expressions));
       const emotion = Object.keys(expressions).filter(
         item => expressions[item] === maxValue
       );
-      
-      document.getElementById("gender").innerText = `Gender - ${gender}`;
-      document.getElementById("emotion").innerText = `Emotion - ${emotion[0]}`;
+    
+      document.getElementById("gender").innerText = `Gender : ${gender}`;
+      document.getElementById("emotion").innerText = `Emotion : ${emotion[0]}`;
     }
   }, 10);
 });
 
-
-
 function capture(){
   let emotion=document.getElementById('emotion').innerText;
   emotion=emotion.slice(10);
-    var a = document.createElement('a');
-    a.href=`/authorize?m=${emotion}`;
-    a.innerHTML = "Genrate Playlist";
-    document.body.appendChild(a);
+
+    if(emotion!=""){
+      var a = document.createElement('a');
+      a.href=`/authorize?m=${emotion}`;
+      a.innerHTML = "Genrate Playlist";
+      document.body.appendChild(a);
+    }
   
 }
