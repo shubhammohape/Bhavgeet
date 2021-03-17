@@ -254,48 +254,64 @@ const vericode = randomInt(randomInt(1,40),randomInt(55,89)) + '' +  randomInt(r
 sess = req.session
 sess.uname = emailAddrss
 
-if(password === repeatPassword)
-{
-bcrypt.hash(password,8).then((data)=>{
-  const bpass = data
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'epic1470@gmail.com',
-      pass: 'abcdefgh@12345'
-    }
-  });
-  var mailOptions = {
-    from: 'epic1470@gmail.com',
-    to: emailAddrss,
-    subject: 'Verification code',
-    text: 'Your Verification code for account is '+ vericode +'.'
-  };
-  const sql = `insert into users(username,password,email,v_key,verified) values('${username}' , '${bpass}' ,'${emailAddrss}' ,${vericode},0)`
-  con.query(sql,(err,res)=>{
-    if (err) {
-      sess.error= " Error ! Try Later" 
-      respo.render("user-validation",{err:sess.error})
-     }
-     transporter.sendMail(mailOptions).then((data)=>{
-      respo.redirect("./validation/verify.html")
-  }).catch((err)=>{
-      sess.error= "Error ! Try later "
-      respo.render("user-validation",{err:sess.error})
-    });
-  })
+const sql22 = `select email from users where email = '${emailAddrss}' ` 
+con.query(sql22,(error,rsult)=>{
+  if(error)
+  {
+    sess.error= " Error! Try later"  
+    respo.render("user-validation",{err:sess.error})
+  }
  
-  
-}).catch((err)=>{
-  sess.error= " Error! Try later"  
+if(rsult.length === 1)
+{
+  sess.error= " Email id is Already registered"  
   respo.render("user-validation",{err:sess.error})
+}
+else
+{
+  if(password === repeatPassword)
+  {
+  bcrypt.hash(password,8).then((data)=>{
+    const bpass = data
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'Your EmailId',
+        pass: 'Your PAssword'
+      }
+    });
+    var mailOptions = {
+      from: 'epic1470@gmail.com',
+      to: emailAddrss,
+      subject: 'Verification code',
+      text: 'Your Verification code for account is '+ vericode +'.'
+    };
+    const sql = `insert into users(username,password,email,v_key,verified) values('${username}' , '${bpass}' ,'${emailAddrss}' ,${vericode},0)`
+    con.query(sql,(err,res)=>{
+      if (err) {
+        sess.error= " Error !Try Later" 
+        respo.render("user-validation",{err:sess.error})
+       }
+       transporter.sendMail(mailOptions).then((data)=>{
+        respo.redirect("./validation/verify.html")
+    }).catch((err)=>{
+        sess.error= "Error!Try later "
+        respo.render("user-validation",{err:sess.error})
+      });
+    })
+   
+    
+  }).catch((err)=>{
+    sess.error= " Error! Try later"  
+    respo.render("user-validation",{err:sess.error})
+  });
+  }
+  else{
+  sess.error= " Password Do not Match "  
+  respo.render("user-validation",{err:sess.error})
+  }
+}
 });
-}
-else{
-sess.error= " Password Do not Match "  
-respo.render("user-validation",{err:sess.error})
-}
-
 });
 
 
