@@ -83,24 +83,58 @@ app.get('/callback',(reqr,resr)=>{
   const error = reqr.query.error;
   const code = reqr.query.code;
   var playlistno;
+  var no;
+  var SelectPlaylist={happy:['1jk5mw0OkFViru6j5ySPLR',
+  '6pfOWoznf6TlqELmkVUuJ1',
+  '78kBHYaQsF6zntWU9R6ziQ',
+  '37i9dQZF1DWTwbZHrJRIgD',
+  '37i9dQZF1DXdPec7aLTmlC'],
+sad:['4YOfhHpjPB0tq29NPpDY3F',
+    '5I9As02pKBVN1kONkCX71l',
+    '3Qjump75nSeeHsS9NYIVde',
+    '4oU0xT9BXx36YyP4SU9yx9',
+    '58eLhPowr4mH2X03jO1prP',
+  ],
+  angry:['4zE61Q9qXsAvokEn5Qdlu3',
+    '71Xpaq3Hbpxz6w9yDmIsaH',
+    '4mVSFKBzWXpv2od9Zd2HET',],
+  surprised:[
+    '6gCRQkxRhmoXAPjYUFFFLz',
+    '3CUpYjEl8N4KQWT57iJJD7',
+    '1MPAXuTVL2Ej5x0JHiSPq8',
+  ],
+  neutral:[
+    '71NI5fW6GZdHiaFu3HPKHO',
+'1envfHJ3Iw10KHbwP1JHpM',
+'7oNIW9XPoeMVRt3ntwEca6',
+'7sTkp2X5Aq84v9w9UtfkaF',
+  ]}
+  if(app.locals.global_value === 'angry' | app.locals.global_value==='surprised')
+  {
+    no = randomInt(0,3) 
+  }
+  else{
+    no = randomInt(0,5) 
+  }
+
   if( app.locals.global_value === 'happy'){
-    playlistno = '6pfOWoznf6TlqELmkVUuJ1'
+    playlistno = SelectPlaylist['happy'][no]
     }
     else if( app.locals.global_value === 'angry')
     {
-      playlistno = '4zE61Q9qXsAvokEn5Qdlu3'
+      playlistno = SelectPlaylist['angry'][no]
     }
     else if( app.locals.global_value === 'surprised')
     {
-      playlistno = '6gCRQkxRhmoXAPjYUFFFLz'
+      playlistno = SelectPlaylist['surprised'][no]
     }
     else if( app.locals.global_value === 'sad')
     {
-      playlistno = '4YOfhHpjPB0tq29NPpDY3F'
+      playlistno = SelectPlaylist['sad'][no]
     }
     else
     {
-      playlistno = '71NI5fW6GZdHiaFu3HPKHO'
+      playlistno = SelectPlaylist['neutral'][no]
     }
 
   if(error){
@@ -117,14 +151,15 @@ app.get('/callback',(reqr,resr)=>{
  
 
   
-   
   
    spotifyApi.getPlaylist(playlistno).then((data)=>{
+    try{
         for(i=0; i < data.body.tracks.items.length ;i++)
         {
           const plname = data.body.name;
         const plurl =data.body.external_urls.spotify;
-        const artistname =data.body.tracks.items[i].track.artists[0].name;
+        var artistname =data.body.tracks.items[i].track.artists[0].name;
+
         if(data.body.tracks.items[i].track.artists[1]){
          var artistname2= data.body.tracks.items[i].track.artists[1].name;
         }else{
@@ -135,35 +170,53 @@ app.get('/callback',(reqr,resr)=>{
         if(data.body.tracks.items[i].track.name.indexOf('\'') > -1)
         {
           var track = data.body.tracks.items[i].track.name
-          var t =track.replace("'", " ")
+          var t =track.replaceAll("'", " ")
           var trackname = t.toString().trim()
         }
         else{
          var trackname = data.body.tracks.items[i].track.name;
         }
+
+
+        if(artistname.indexOf('\'') > -1)
+        {
+          var art = artistname
+          var art1 =art.replaceAll("'", " ")
+          artistname = art1.toString().trim()
+        }
+        
+        
+        if(artistname2.indexOf('\'') > -1)
+        {
+          var art2 = artistname2
+          var at =art2.replaceAll("'", " ")
+          artistname2 = at.toString().trim()
+        }
+        
         const duration = data.body.tracks.items[i].track.duration_ms;
         const src = data.body.tracks.items[i].track.external_urls.spotify;
         const img = data.body.tracks.items[i].track.album.images[0].url;
         const reldate = data.body.tracks.items[i].track.album.release_date;
-        
         const sql = `insert into musicinfo(playlistname,Artistname,Trackname,duration,src,img,reldate,playlisturl,Artist2) values('${plname}','${artistname}','${trackname}',${duration},'${src}','${img}','${reldate}','${plurl}','${artistname2}')`
-      
+        
         con.query(sql,(err,resp)=>{
           if (err) {
-          resr.redirect('./index2')
            }
           
         })
-
       }
       
+      }
+      catch(e){
+     
+      }
       resr.redirect('/new')
     }).catch((error)=>{
-   
+ 
       resr.redirect('./index2')
     })
   }).catch((error1)=>{
-    
+   
     resr.redirect('./index2')
   });
 
@@ -276,8 +329,8 @@ else
     var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'Your EmailId',
-        pass: 'Your PAssword'
+        user: 'epic1470@gmail.com',
+        pass: 'abcdefgh@12345'
       }
     });
     var mailOptions = {
